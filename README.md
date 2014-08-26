@@ -6,6 +6,12 @@
 npm install git+https://github.com/SelfishInc/miniswagger
 ```
 
+or
+
+```bash
+npm install git@github.com:SelfishInc/miniswagger.git
+```
+
 ## Usage
 
 Works through `browserify`
