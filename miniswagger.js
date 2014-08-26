@@ -1,5 +1,7 @@
 /* jshint node: true */
 
+"use strict";
+
 var node = typeof window === 'undefined';
 var browser = typeof window !== 'undefined';
 
@@ -12,6 +14,26 @@ if (node) _ = require('lodash'); else _ = window._;
 
 var Promise;
 if (node) Promise = require('promise'); else Promise = window.Promise;
+
+function fetchSpec(url) {
+    console.log(">>>", url);
+    return new Promise(function(resolve, reject) {
+        request({
+            url: url,
+            json: true
+        }, function(err, response, body) {
+            if (err) reject(err);
+            else resolve(body);
+        });
+    });
+}
+
+function fetchSpecs(url) {
+    return fetchSpec(url).then(function(specs) {
+        var paths = specs.apis.map(function(x) {return specs.basePath + x.path;} );
+        return Promise.all(paths.map(fetchSpec));
+    });
+}
 
 var SwaggerResource = function(spec) {
     this.paths = {};
@@ -91,6 +113,34 @@ var SwaggerResource = function(spec) {
     return this;
 };
 
+var fromUrl = function(url) {
+    console.log('fetching apis from', url);
+
+    var self = this;
+
+    this.ready = new Promise(function(resolve, reject) {
+        fetchSpecs(url)
+            .then(
+                function(specs){
+                    // console.log(specs);
+                    specs.map(function(spec) {
+                        self[spec.resourcePath.replace(/^\//, '')] = new SwaggerResource(spec);
+                    });
+
+                    console.log('API ready.');
+                    resolve();
+                },
+                function(error) {
+                    console.error(error);
+                    reject(error);
+                }
+            );
+    });
+
+    return this;
+};
+
 module.exports = {
-    SwaggerResource: SwaggerResource
+    SwaggerResource: SwaggerResource,
+    fromUrl: fromUrl
 };
