@@ -1,4 +1,4 @@
-/* jshint node: true */
+/* jshint node: true, browser: true */
 
 "use strict";
 
@@ -117,6 +117,7 @@ var fromUrl = function(url) {
     console.log('fetching apis from', url);
 
     var self = this;
+    if (node) self.jar = request.jar();
 
     this.ready = new Promise(function(resolve, reject) {
         fetchSpecs(url)
@@ -125,6 +126,7 @@ var fromUrl = function(url) {
                     // console.log(specs);
                     specs.map(function(spec) {
                         self[spec.resourcePath.replace(/^\//, '')] = new SwaggerResource(spec);
+                        if (self.jar) self[spec.resourcePath.replace(/^\//, '')].jar = self.jar;
                     });
 
                     console.log('API ready.');
@@ -140,7 +142,20 @@ var fromUrl = function(url) {
     return this;
 };
 
+var fromSpecs = function(specs) {
+    var self = this;
+    if (node) self.jar = request.jar();
+
+    Object.keys(specs).forEach(function(spec) {
+        self[spec] = new SwaggerResource(specs[spec]);
+        if (self.jar) self[spec].jar = self.jar;
+    });
+
+    return this;
+};
+
 module.exports = {
     SwaggerResource: SwaggerResource,
-    fromUrl: fromUrl
+    fromUrl: fromUrl,
+    fromSpecs: fromSpecs
 };
