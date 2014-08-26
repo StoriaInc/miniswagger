@@ -2,7 +2,7 @@
 
 "use strict";
 
-var miniswagger = require('miniswagger');
+var miniswagger = require('miniswagger').default;
 
 var util = require('util');
 var inspect = function(x) { util.inspect(x, {depth: 8, colors: true }); };

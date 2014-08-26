@@ -3,7 +3,7 @@
 
 var specs = require('./api-specs').default;
 
-var miniswagger = require('miniswagger');
+var miniswagger = require('miniswagger').default;
 
 var Api = new miniswagger.fromSpecs(specs);
 

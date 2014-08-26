@@ -17,7 +17,7 @@ npm install git@github.com:SelfishInc/miniswagger.git
 Works through `browserify`
 
 ```javascript
-var miniswagger = require('miniswagger');
+var miniswagger = require('miniswagger').default;
 ```
 
 ### Fetching specs from remote server

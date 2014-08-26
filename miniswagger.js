@@ -154,7 +154,7 @@ var fromSpecs = function(specs) {
     return this;
 };
 
-module.exports = {
+module.exports.default = {
     SwaggerResource: SwaggerResource,
     fromUrl: fromUrl,
     fromSpecs: fromSpecs
