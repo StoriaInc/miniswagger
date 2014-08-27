@@ -84,7 +84,15 @@ var SwaggerResource = function(spec) {
                                 .filter(function(x) { return x.code === response.statusCode; })
                                 .forEach(function(e){ console.error(e.message); });
                         }
-                        reject(response);
+
+                        // TODO: properly reject the promise
+                        //       once Atlant is ready for this
+                        
+                        // reject(response);
+                        resolve({
+                            status: response.statusCode,
+                            response: response
+                        });
                     }
 
                     if (err || response.statusCode !== 200) handleError();
