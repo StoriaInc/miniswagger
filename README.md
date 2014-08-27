@@ -9,7 +9,7 @@ npm install git+https://github.com/SelfishInc/miniswagger
 or
 
 ```bash
-npm install git@github.com:SelfishInc/miniswagger.git
+npm install git+ssh://git@github.com:SelfishInc/miniswagger.git
 ```
 
 ## Usage
