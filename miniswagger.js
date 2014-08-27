@@ -66,6 +66,7 @@ var SwaggerResource = function(spec) {
                 headers:  { accept: "application/json, text/plain" },
                 json: true,
                 gzip: true,
+                withCredentials: true,
                 jar: this.jar // browser-request ignores this, so it's safe to have here
             };
 
