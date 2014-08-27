@@ -1,6 +1,6 @@
 {
   "name": "miniswagger",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Minimal swagger implementation for Selfish API",
   "main": "miniswagger.js",
   "scripts": {
@@ -8,19 +8,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/urzhumskov/miniswagger.git"
+    "url": "https://github.com/SelfishInc/miniswagger.git"
   },
   "keywords": [
     "swagger",
     "api",
     "minimal"
   ],
-  "author": "Sergey Urzhumskov",
+  "author": "Frumatic",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/urzhumskov/miniswagger/issues"
+    "url": "https://github.com/SelfishInc/miniswagger/issues"
   },
-  "homepage": "https://github.com/urzhumskov/miniswagger",
+  "homepage": "https://github.com/SelfishInc/miniswagger",
   "dependencies": {
     "browser-request": "^0.3.2",
     "lodash": "^2.4.1",
