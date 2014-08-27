@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/urzhumskov/miniswagger",
   "dependencies": {
+    "browser-request": "^0.3.2",
     "lodash": "^2.4.1",
     "promise": "^5.0.0",
     "request": "^2.40.0",
