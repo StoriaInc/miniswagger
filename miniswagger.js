@@ -57,7 +57,6 @@ var SwaggerResource = function(spec) {
 
     function makePromise(operation) {
         return (function(params) {
-            var origParams = params;
             params = JSON.parse(JSON.stringify(params));
             var op = this.operations[operation];
 
@@ -67,12 +66,8 @@ var SwaggerResource = function(spec) {
                 headers:  { accept: "application/json, text/plain" },
                 json: true,
                 gzip: true,
-                withCredentials: true, // for CORS requests, send/receive cookies
-                jar: this.jar, // browser-request ignores this, so it's safe to have here
-                auth: {
-                    username: 'frumatic',
-                    password: 'frumatic7'
-                }
+                withCredentials: true,
+                jar: this.jar // browser-request ignores this, so it's safe to have here
             };
 
             if (['POST', 'DELETE', 'PATCH', 'PUT'].indexOf(op.httpMethod) > -1)
@@ -97,16 +92,12 @@ var SwaggerResource = function(spec) {
                         // reject(response);
                         resolve({
                             status: response.statusCode,
-                            response: response,
-                            body: body
+                            response: response
                         });
                     }
 
                     if (err || response.statusCode !== 200) handleError();
-                    else {
-                        // console.log(operation, origParams, body);
-                        resolve({ obj: JSON.parse(_.unescape(JSON.stringify(body))) });
-                    }
+                    else resolve({obj: JSON.parse(_.unescape(JSON.stringify(body)))});
                 });
             });
         }).bind(this);
@@ -169,7 +160,6 @@ var fromSpecs = function(specs) {
         if (self.jar) self[spec].jar = self.jar;
     });
 
-    console.log('API ready');
     return this;
 };
 
