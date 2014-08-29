@@ -9,8 +9,7 @@ var request;
 if (browser) request = require('browser-request');
 else request = require('request');
 
-var _;
-if (node) _ = require('lodash'); else _ = window._;
+var _ = require('lodash');
 
 var Promise;
 if (node) Promise = require('promise'); else Promise = window.Promise;
