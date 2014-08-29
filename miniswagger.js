@@ -35,7 +35,7 @@ function fetchSpecs(url) {
     });
 }
 
-var SwaggerResource = function(spec) {
+var SwaggerResource = function(parent, spec) {
     this.paths = {};
     this.operations = {};
 
@@ -67,7 +67,7 @@ var SwaggerResource = function(spec) {
                 json: true,
                 gzip: true,
                 withCredentials: true,
-                jar: this.jar // browser-request ignores this, so it's safe to have here
+                jar: parent.jar // browser-request ignores this, so it's safe to have here
             };
 
             if (['POST', 'DELETE', 'PATCH', 'PUT'].indexOf(op.httpMethod) > -1)
@@ -134,8 +134,7 @@ var fromUrl = function(url) {
                 function(specs){
                     // console.log(specs);
                     specs.map(function(spec) {
-                        self[spec.resourcePath.replace(/^\//, '')] = new SwaggerResource(spec);
-                        if (self.jar) self[spec.resourcePath.replace(/^\//, '')].jar = self.jar;
+                        self[spec.resourcePath.replace(/^\//, '')] = new SwaggerResource(self, spec);
                     });
 
                     console.log('API ready.');
@@ -156,7 +155,7 @@ var fromSpecs = function(specs) {
     if (node) self.jar = request.jar();
 
     Object.keys(specs).forEach(function(spec) {
-        self[spec] = new SwaggerResource(specs[spec]);
+        self[spec] = new SwaggerResource(self, specs[spec]);
         if (self.jar) self[spec].jar = self.jar;
     });
 
