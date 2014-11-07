@@ -89,7 +89,12 @@ var SwaggerResource = function(parent, spec) {
                         //       once Atlant is ready for this
                         
                         // reject(response);
-                        resolve({
+                        if (response.statusCode === 0) reject({
+                            status: response.statusCode,
+                            response: response
+                        })
+                        
+                        else resolve({
                             status: response.statusCode,
                             response: response
                         });
