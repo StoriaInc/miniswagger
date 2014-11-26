@@ -56,23 +56,26 @@ var SwaggerResource = function(parent, spec) {
 
     function makePromise(operation) {
         return (function(params) {
-            params = JSON.parse(JSON.stringify(params));
+            params = JSON.parse(JSON.stringify(params)); // clone the params object
             var op = this.operations[operation];
 
             var req = {
                 url: spec.basePath + interpolate(op.path, params),
                 method: op.httpMethod,
-                headers:  { accept: "application/json, text/plain" },
-                json: true,
+                headers:  {
+                    accept: "application/json, text/plain",
+                    "content-type": "application/json; charset=UTF-8"
+                },
+                json: false,
                 gzip: true,
                 withCredentials: true,
                 jar: parent.jar // browser-request ignores this, so it's safe to have here
             };
 
             if (['POST', 'DELETE', 'PATCH', 'PUT'].indexOf(op.httpMethod) > -1)
-                req.json = params;
-            else
-                req.qs = params;
+                req.body = JSON.stringify(params)
+            else 
+                req.qs = params
 
             return new Promise(function (resolve, reject) {
                 request(req, function(err, response, body) {
@@ -101,7 +104,7 @@ var SwaggerResource = function(parent, spec) {
                     }
 
                     if (err || response.statusCode !== 200) handleError();
-                    else resolve({obj: JSON.parse(_.unescape(JSON.stringify(body)))});
+                    else resolve({obj: JSON.parse(_.unescape(body))});
                 });
             });
         }).bind(this);
