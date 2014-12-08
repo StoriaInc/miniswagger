@@ -54,7 +54,7 @@ var SwaggerResource = function(parent, spec) {
         return path;
     }
 
-    function makePromise(operation) {
+    function makePromise(operation, models) {
         return (function(params) {
             params = JSON.parse(JSON.stringify(params)); // clone the params object
             var op = this.operations[operation];
@@ -72,10 +72,30 @@ var SwaggerResource = function(parent, spec) {
                 jar: parent.jar // browser-request ignores this, so it's safe to have here
             };
 
-            if (['POST', 'DELETE', 'PATCH', 'PUT'].indexOf(op.httpMethod) > -1)
-                req.body = JSON.stringify(params)
-            else 
-                req.qs = params
+            var body = {}
+            var qs = {}
+
+            Object.keys(params).map(function(p) {
+                var paramType;
+
+                var pp = _.find(this.operations[operation].parameters, function(x) { return x.name === p})
+                if (!!pp) paramType = pp.paramType
+                else {
+                    pp = _.find(
+                        this.operations[operation].parameters.filter( function(prm) { return prm.type in spec.models }), function(prm) { return p in spec.models[prm.type].properties })
+                    if (typeof pp !== 'undefined') {
+                        paramType = pp.paramType
+                    } else {
+                        console.log("Warning: cannot deduce parameter type. Assuming `query`:", operation, p)
+                    }
+                        
+                }
+                if (paramType === 'body') body[p] = params[p]
+                else qs[p] = params[p]
+            }, this)
+            
+            req.body = JSON.stringify(body)
+            req.qs = qs
 
             return new Promise(function (resolve, reject) {
                 request(req, function(err, response, body) {
@@ -123,7 +143,7 @@ var SwaggerResource = function(parent, spec) {
     );
 
     Object.keys(this.operations).forEach(function(op) {
-        this[op] = makePromise.bind(this)(op);
+        this[op] = makePromise.bind(this)(op, spec.models);
     }, this);
 
     return this;
@@ -148,10 +168,13 @@ var fromUrl = function(url) {
                     resolve();
                 },
                 function(error) {
-                    console.error(error);
+                    console.error(error.stack);
                     reject(error);
                 }
-            );
+            )
+            .catch(function(err) {
+                console.error(err.stack)
+            });
     });
 
     return this;
