@@ -34,21 +34,6 @@ function fetchSpecs(url) {
     });
 }
 
-function expandModels(params, models) {
-    if (params.length === 0) return []
-    else {
-        return params[0].type in models ?
-            expandModels( Object.keys(models[params[0].type].properties).map( function(prop) {
-                var p = models[params[0].type].properties[prop]
-                p.name = prop
-                p.paramType = params[0].paramType
-                return p
-            }).concat(params.slice(1)), models)
-        :
-        [params[0]].concat(expandModels(params.slice(1), models))
-    }
-}
-
 var SwaggerResource = function(parent, spec) {
     this.paths = {};
     this.operations = {};
@@ -91,12 +76,20 @@ var SwaggerResource = function(parent, spec) {
             var qs = {}
 
             Object.keys(params).map(function(p) {
-                var param = _.find(this.operations[operation].parameters, function(x) { return x.name === p})
-                if (!param) {
-                    console.error("No parameter", p, "in", operation, "???")
-                    console.log(this.operations[operation].parameters)
+                var paramType;
+
+                var pp = _.find(this.operations[operation].parameters, function(x) { return x.name === p})
+                if (!!pp) paramType = pp.paramType
+                else {
+                    pp = _.find(
+                        this.operations[operation].parameters.filter( function(prm) { return prm.type in spec.models }), function(prm) { return p in spec.models[prm.type].properties })
+                    if (typeof pp !== 'undefined') {
+                        paramType = pp.paramType
+                    } else {
+                        console.log("Warning: cannot deduce parameter type. Assuming `query`:", operation, p)
+                    }
+                        
                 }
-                var paramType = param.paramType
                 if (paramType === 'body') body[p] = params[p]
                 else qs[p] = params[p]
             }, this)
@@ -144,7 +137,6 @@ var SwaggerResource = function(parent, spec) {
                     if (!this.paths[api.path]) this.paths[api.path] = {};
                     this.paths[api.path][op.httpMethod] = this.operations[op.nickname] = op;
                     op.path = api.path;
-                    op.parameters = expandModels(op.parameters || [], spec.models)
                 }, this
             );
         }, this
@@ -167,6 +159,7 @@ var fromUrl = function(url) {
         fetchSpecs(url)
             .then(
                 function(specs){
+                    // console.log(specs);
                     specs.map(function(spec) {
                         self[spec.resourcePath.replace(/^\//, '')] = new SwaggerResource(self, spec);
                     });
