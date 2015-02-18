@@ -56,7 +56,7 @@ var SwaggerResource = function(parent, spec) {
 
     function makePromise(operation, models) {
         return (function(params) {
-            params = JSON.parse(JSON.stringify(params)); // clone the params object
+            params = JSON.parse(JSON.stringify(params || {})); // clone the params object
             var op = this.operations[operation];
 
             var req = {
