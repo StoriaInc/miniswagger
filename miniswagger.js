@@ -86,14 +86,13 @@ var SwaggerResource = function(parent, spec) {
                     if (typeof pp !== 'undefined') {
                         paramType = pp.paramType
                     } else {
-                        console.log("Warning: cannot deduce parameter type. Assuming `query`:", operation, p)
+                        console.log("Warning: cannot deduce parameter type. Guessing.", operation, p)
                     }
-                        
                 }
-                if (paramType === 'body') body[p] = params[p]
+                if (paramType === 'body' || (['POST', 'DELETE', 'PATCH', 'PUT'].indexOf(op.httpMethod) > -1)) body[p] = params[p]
                 else qs[p] = params[p]
             }, this)
-            
+
             req.body = JSON.stringify(body)
             req.qs = qs
 
@@ -110,13 +109,13 @@ var SwaggerResource = function(parent, spec) {
 
                         // TODO: properly reject the promise
                         //       once Atlant is ready for this
-                        
+
                         // reject(response);
                         if (response.statusCode === 0) reject({
                             status: response.statusCode,
                             response: response
                         })
-                        
+
                         else resolve({
                             status: response.statusCode,
                             response: response
