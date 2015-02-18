@@ -123,7 +123,14 @@ var SwaggerResource = function(parent, spec) {
                     }
 
                     if (err || response.statusCode !== 200) handleError();
-                    else resolve({obj: JSON.parse(_.unescape(body))});
+                    else {
+                        if (!body.length) {
+                            console.error('Warning: Empty response from backend')
+                            body = '{}'
+                        }
+
+                        resolve({obj: JSON.parse(_.unescape(body))});
+                    }
                 });
             });
         }).bind(this);
