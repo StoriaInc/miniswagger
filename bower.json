@@ -1,0 +1,23 @@
+{
+  "name": "miniswagger",
+  "main": "miniswagger.js",
+  "version": "0.0.2",
+  "homepage": "https://github.com/SelfishInc/miniswagger",
+  "authors": [
+    "Sergey Urzhumskov <sergey.urzhumskov@frumatic.com>"
+  ],
+  "description": "Minimal swagger implementation for Selfish API",
+  "keywords": [
+    "swagger",
+    "api",
+    "minimal"
+  ],
+  "license": "ISC",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

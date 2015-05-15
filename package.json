@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/SelfishInc/miniswagger.git"
+    "url": "https://github.com/selfishinc/miniswagger.git"
   },
   "keywords": [
     "swagger",
@@ -18,9 +18,9 @@
   "author": "Frumatic",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/SelfishInc/miniswagger/issues"
+    "url": "https://github.com/selfishinc/miniswagger/issues"
   },
-  "homepage": "https://github.com/SelfishInc/miniswagger",
+  "homepage": "https://github.com/selfishinc/miniswagger",
   "dependencies": {
     "browser-request": "^0.3.2",
     "lodash": "^2.4.1",

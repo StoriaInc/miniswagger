@@ -5,14 +5,17 @@
 var node = typeof window === 'undefined';
 var browser = typeof window !== 'undefined';
 
-var request;
-if (browser) request = require('browser-request');
-else request = require('request');
+var request, _, Promise;
 
-var _ = require('lodash');
-
-var Promise;
-if (node) Promise = require('promise'); else Promise = window.Promise;
+if (browser) {
+    request = window.request;
+    _ = window._;
+    Promise = window.Promise;
+} else {
+    request = require('request');
+    _ = require('lodash');
+    Promise = require('promise');
+}
 
 function fetchSpec(url) {
     console.log(">>>", url);
@@ -198,8 +201,17 @@ var fromSpecs = function(specs) {
     return this;
 };
 
-module.exports.default = {
+var miniswagger = {
     SwaggerResource: SwaggerResource,
     fromUrl: fromUrl,
     fromSpecs: fromSpecs
 };
+
+if (browser) {
+    window.miniswagger = {};
+    window.miniswagger.default = miniswagger;
+} else {
+    module.exports.default = miniswagger;
+}
+
+
