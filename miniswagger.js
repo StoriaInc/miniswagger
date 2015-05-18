@@ -1,5 +1,4 @@
 /* jshint node: true, browser: true */
-
 "use strict";
 
 var node = typeof window === 'undefined';
@@ -208,8 +207,7 @@ var miniswagger = {
 };
 
 if (browser) {
-    window.miniswagger = {};
-    window.miniswagger.default = miniswagger;
+    window.miniswagger = { default: miniswagger };
 } else {
     module.exports.default = miniswagger;
 }
