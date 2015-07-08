@@ -131,7 +131,13 @@ var SwaggerResource = function(parent, spec) {
                             body = '{}'
                         }
 
-                        resolve({obj: JSON.parse(_.unescape(body))});
+                        var obj;
+                        try{
+                            obj = JSON.parse(body);
+                        } catch(e) {
+                            console.error(e.stack)
+                        }
+                        resolve({obj: obj})
                     }
                 });
             });
