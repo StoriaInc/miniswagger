@@ -4,15 +4,16 @@
 var miniswagger = function(options){
     var timeFirst, timeEnd;
     var cache = {};
+    if(!('cacheExpire' in options)) options.cacheExpire = 20000;
+    if(!('debug' in options)) options.debug = false;
 
     var log = function(){}
 
-    if (!options.debug)
+    if (options.debug)
         log = console.log.bind(console)
     
     log('cache: expire at:', options)
 
-    if(!('cacheExpire' in options)) options.cacheExpire = 20000;
 
     var node = typeof window === 'undefined';
 
