@@ -143,7 +143,6 @@ var miniswagger = function(options){
 
                             // TODO: properly reject the promise
                             //       once Atlant is ready for this
-                            timeSum += now() - timeBegin;
 
                             // reject(response);
                             if (response.statusCode === 0) reject({
