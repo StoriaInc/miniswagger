@@ -11,7 +11,7 @@ var miniswagger = function(options){
 
     if (options.debug)
         log = console.log.bind(console)
-    
+
     log('cache: expire at:', options)
 
 
@@ -95,20 +95,6 @@ var miniswagger = function(options){
                 var body = {}
                 var qs = {}
 
-                var justNow = now();
-                if ( 'GET' === req.method && req.url in cache && (justNow - cache[req.url].date <= options.cacheExpire)) {
-                    log('--- cache: HIT', req.url, justNow - cache[req.url].date);
-                    return new Promise(function(resolve, reject){ 
-                        resolve(cache[req.url].value)
-                    })
-                } else { 
-                    if(!cache[req.url]) log('--- cache: MISS', req.url)
-                    if(cache[req.url]) { 
-                        log('--- cache: EXPRIRED', req.url, (justNow - cache[req.url].date))
-                        delete cache[req.url]
-                    }
-                };
-
                 Object.keys(params).map(function(p) {
                     var paramType;
 
@@ -129,6 +115,26 @@ var miniswagger = function(options){
 
                 req.body = JSON.stringify(body)
                 req.qs = qs
+
+
+                function key (req){
+                    return req.url + JSON.stringify(req.qs)
+                }
+
+                var justNow = now();
+                if ( 'GET' === req.method && key(req) in cache && (justNow - cache[key(req)].date <= options.cacheExpire)) {
+                    log('--- cache: HIT', req.url, justNow - cache[key(req)].date);
+                    return new Promise(function(resolve, reject){
+                        resolve(cache[key(req)].value)
+                    })
+                } else {
+                    if(!cache[key(req)]) log('--- cache: MISS', req.url, req.qs)
+                    if(cache[key(req)]) {
+                        log('--- cache: EXPRIRED', req.url, (justNow - cache[key(req)].date))
+                        delete cache[key(req)]
+                    }
+                };
+
 
                 return new Promise(function (resolve, reject) {
                     request(req, function(err, response, body) {
@@ -173,10 +179,10 @@ var miniswagger = function(options){
                             log('lastTime:', req.url, timeEnd - timeFirst);
 
                             if ('GET' === req.method) {
-                                cache[req.url] = {};
-                                cache[req.url].value = {obj: obj};
-                                cache[req.url].date = now()
-                                log('cache: SET', req.url, cache[req.url].date)
+                                cache[key(req)] = {};
+                                cache[key(req)].value = {obj: obj};
+                                cache[key(req)].date = now()
+                                log('cache: SET', req.url, cache[key(req)].date)
                             }
 
                             resolve({obj: obj})
@@ -214,20 +220,20 @@ var miniswagger = function(options){
         this.ready = new Promise(function(resolve, reject) {
             fetchSpecs(url)
                 .then(
-                    function(specs){
-                        // log(specs);
-                        specs.map(function(spec) {
-                            self[spec.resourcePath.replace(/^\//, '')] = new SwaggerResource(self, spec);
-                        });
+                function(specs){
+                    // log(specs);
+                    specs.map(function(spec) {
+                        self[spec.resourcePath.replace(/^\//, '')] = new SwaggerResource(self, spec);
+                    });
 
-                        log('API ready.');
-                        resolve();
-                    },
-                    function(error) {
-                        console.error(error.stack);
-                        reject(error);
-                    }
-                )
+                    log('API ready.');
+                    resolve();
+                },
+                function(error) {
+                    console.error(error.stack);
+                    reject(error);
+                }
+            )
                 .catch(function(err) {
                     console.error(err.stack)
                 });
