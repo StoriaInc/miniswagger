@@ -138,6 +138,13 @@ var miniswagger = function(options){
 
                 return new Promise(function (resolve, reject) {
                     request(req, function(err, response, body) {
+
+                        var headers = response.getAllResponseHeaders().split("\n").reduce( function(acc, i) { 
+                            var parts = i.split(':').map(function(_){ return _.trim() });
+                            if("" !== parts[0]) acc[parts[0]] = parts[1];
+                            return acc
+                        }, {});
+
                         function handleError() {
                             console.error('API error', response.statusCode, response.body);
 
@@ -153,11 +160,13 @@ var miniswagger = function(options){
                             // reject(response);
                             if (response.statusCode === 0) reject({
                                 status: response.statusCode,
+                                headers: headers,
                                 response: response
                             })
 
                             else resolve({
                                 status: response.statusCode,
+                                headers: headers,
                                 response: response
                             });
                         }
@@ -169,9 +178,12 @@ var miniswagger = function(options){
                                 body = '{}'
                             }
 
-                            var obj;
+                            var value = {
+                                headers: headers
+                            }
+
                             try{
-                                obj = JSON.parse(body);
+                                value.obj = JSON.parse(body);
                             } catch(e) {
                                 console.error(e.stack)
                             }
@@ -180,12 +192,12 @@ var miniswagger = function(options){
 
                             if ('GET' === req.method) {
                                 cache[key(req)] = {};
-                                cache[key(req)].value = {obj: obj};
+                                cache[key(req)].value = value;
                                 cache[key(req)].date = now()
                                 log('cache: SET', req.url, cache[key(req)].date)
                             }
 
-                            resolve({obj: obj})
+                            resolve(value)
                         }
                     });
                 });
