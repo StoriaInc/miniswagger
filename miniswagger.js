@@ -140,8 +140,10 @@ var miniswagger = function(options){
                     request(req, function(err, response, body) {
 
                         var headers = response.getAllResponseHeaders().split("\n").reduce( function(acc, i) { 
-                            var parts = i.split(':').map(function(_){ return _.trim() });
-                            if("" !== parts[0]) acc[parts[0]] = parts[1];
+                            var colon = i.indexOf(':');
+                            var key = i.substring(0, colon) 
+                            var value = i.substring(colon+1, i.length).trim('')
+                            if(key) acc[key] = value;
                             return acc
                         }, {});
 

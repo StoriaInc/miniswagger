@@ -1,7 +1,7 @@
 {
   "name": "miniswagger",
   "main": "miniswagger.js",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "homepage": "git@github.com:frumatic/miniswagger.git",
   "main": "miniswagger.js",
   "authors": [
