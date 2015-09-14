@@ -73,19 +73,23 @@ var miniswagger = function(options){
         }
 
         function makePromise(operation, models) {
-            return (function(params) {
+            return (function(params, additionalHeaders) {
                 if (!timeFirst) timeFirst = now();
 
                 params = JSON.parse(JSON.stringify(params || {})); // clone the params object
                 var op = this.operations[operation];
 
+                var defaultHeaders = {
+                    accept: "application/json, text/plain",
+                    "content-type": "application/json; charset=UTF-8"
+                };
+
+                var headers = ( additionalHeaders ) ? _.extend( defaultHeaders, additionalHeaders ) : defaultHeaders;
+
                 var req = {
                     url: spec.basePath + interpolate(op.path, params),
                     method: op.httpMethod,
-                    headers:  {
-                        accept: "application/json, text/plain",
-                        "content-type": "application/json; charset=UTF-8"
-                    },
+                    headers:  headers,
                     json: false,
                     gzip: true,
                     withCredentials: true,
