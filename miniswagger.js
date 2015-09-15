@@ -139,6 +139,24 @@ var miniswagger = function(options){
                     }
                 };
 
+                var serialize = function(obj) {
+                    var str = [];
+                    for(var p in obj)
+                        if (obj.hasOwnProperty(p)) {
+                            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                        }
+                    return str.join("&");
+                }
+
+                if(req.qs){
+                    var qs = (typeof req.qs == 'string')? req.qs : serialize(req.qs);
+                    if(req.url.indexOf('?') !== -1){ //no get params
+                        req.url = req.url+'&'+qs;
+                    }else{ //existing get params
+                        req.url = req.url+'?'+qs;
+                    }
+                    req.qs = void 0;
+                }
 
                 return new Promise(function (resolve, reject) {
                     request(req, function(err, response, body) {

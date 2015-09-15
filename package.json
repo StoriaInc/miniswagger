@@ -1,6 +1,6 @@
 {
   "name": "miniswagger",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Minimal swagger implementation for Selfish API",
   "main": "miniswagger.js",
   "scripts": {
