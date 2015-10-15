@@ -6,6 +6,7 @@ var miniswagger = function(options){
     var cache = {};
     if(!('cacheExpire' in options)) options.cacheExpire = 20000;
     if(!('debug' in options)) options.debug = false;
+    options.headers = options.headers || {};
 
     var log = function(){}
 
@@ -79,10 +80,10 @@ var miniswagger = function(options){
                 params = JSON.parse(JSON.stringify(params || {})); // clone the params object
                 var op = this.operations[operation];
 
-                var defaultHeaders = {
+                var defaultHeaders = _.extend({
                     accept: "application/json, text/plain",
                     "content-type": "application/json; charset=UTF-8"
-                };
+                }, options.headers);
 
                 var headers = ( additionalHeaders ) ? _.extend( defaultHeaders, additionalHeaders ) : defaultHeaders;
 
