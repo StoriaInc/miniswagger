@@ -34,7 +34,7 @@ function fetchSpecs(url) {
     });
 }
 
-var SwaggerResource = function(parent, spec) {
+var SwaggerResource = function(parent, spec, cookie) {
     this.paths = {};
     this.operations = {};
 
@@ -59,8 +59,18 @@ var SwaggerResource = function(parent, spec) {
             params = JSON.parse(JSON.stringify(params || {})); // clone the params object
             var op = this.operations[operation];
 
+            var jar = parent.jar;
+            var url = spec.basePath + interpolate(op.path, params);
+            if (cookie) {
+                jar.setCookie(cookie, url, {loose: false}, function(err, data) {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            }
+
             var req = {
-                url: spec.basePath + interpolate(op.path, params),
+                url: url,
                 method: op.httpMethod,
                 headers:  {
                     accept: "application/json, text/plain",
@@ -69,7 +79,7 @@ var SwaggerResource = function(parent, spec) {
                 json: false,
                 gzip: true,
                 withCredentials: true,
-                jar: parent.jar // browser-request ignores this, so it's safe to have here
+                jar: jar // browser-request ignores this, so it's safe to have here
             };
 
             var body = {}
@@ -186,12 +196,12 @@ var fromUrl = function(url) {
     return this;
 };
 
-var fromSpecs = function(specs) {
+var fromSpecs = function(specs, cookie) {
     var self = this;
     if (node) self.jar = request.jar();
 
     Object.keys(specs).forEach(function(spec) {
-        self[spec] = new SwaggerResource(self, specs[spec]);
+        self[spec] = new SwaggerResource(self, specs[spec], cookie);
         if (self.jar) self[spec].jar = self.jar;
     });
 
