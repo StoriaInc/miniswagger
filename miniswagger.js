@@ -61,20 +61,14 @@ var SwaggerResource = function(parent, spec, cookie) {
 
             var jar = parent.jar;
             var url = spec.basePath + interpolate(op.path, params);
-            if (cookie) {
-                jar.setCookie(cookie, url, {loose: false}, function(err, data) {
-                    if (err) {
-                        console.log(err);
-                    }
-                });
-            }
 
             var req = {
                 url: url,
                 method: op.httpMethod,
                 headers:  {
                     accept: "application/json, text/plain",
-                    "content-type": "application/json; charset=UTF-8"
+                    "content-type": "application/json; charset=UTF-8",
+                    cookie: cookie
                 },
                 json: false,
                 gzip: true,
