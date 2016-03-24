@@ -133,7 +133,7 @@ var SwaggerResource = function(parent, spec, cookie) {
                             body = '{}'
                         }
 
-                        resolve({obj: JSON.parse(_.unescape(body))});
+                        resolve({obj: JSON.parse(body)});
                     }
                 });
             });
