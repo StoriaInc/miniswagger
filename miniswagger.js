@@ -162,9 +162,9 @@ var miniswagger = function(options){
                 return new Promise(function (resolve, reject) {
                     request(req, function(err, response, body) {
 
-                        var headers = response.getAllResponseHeaders().split("\n").reduce( function(acc, i) { 
+                        var headers = response.getAllResponseHeaders().split("\n").reduce( function(acc, i) {
                             var colon = i.indexOf(':');
-                            var key = i.substring(0, colon) 
+                            var key = i.substring(0, colon)
                             var value = i.substring(colon+1, i.length).trim('')
                             if(key) acc[key] = value;
                             return acc
@@ -305,10 +305,8 @@ var miniswagger = function(options){
 
 }
 
-if ('undefined' !== typeof window) {
-    window.miniswagger = { default: miniswagger };
-} else {
+if (typeof exports === 'object' && exports) {
     module.exports.default = miniswagger;
+} else if ('undefined' !== typeof window) {
+    window.miniswagger = { default: miniswagger };
 }
-
-
