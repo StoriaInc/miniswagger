@@ -22,10 +22,10 @@
   },
   "homepage": "https://github.com/frumatic/miniswagger",
   "dependencies": {
-    "browser-request": "^0.3.2",
-    "lodash": "^2.4.1",
-    "promise": "^5.0.0",
-    "request": "^2.40.0",
+    "browser-request": "0.3.2",
+    "lodash": "^4.11.1",
+    "promise": "6.0.0",
+    "request": "2.44.0",
     "tough-cookie": "^0.12.1"
   }
 }

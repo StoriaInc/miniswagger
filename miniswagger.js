@@ -15,22 +15,20 @@ var miniswagger = function(options){
 
     log('cache: expire at:', options)
 
-
     var node = typeof window === 'undefined';
 
-    var request, _, Promise;
+    var _ = require('lodash');
+    var Promise = require('promise');
+
+    var request;
     var now = function(){
         return 'undefined' !== typeof performance ? performance.now() : new Date().getTime()
     }
 
     if (!node) {
         request = window.request;
-        _ = window._;
-        Promise = window.Promise;
     } else {
         request = require('request');
-        _ = require('lodash');
-        Promise = require('promise');
     }
 
     function fetchSpec(url) {
@@ -301,8 +299,6 @@ var miniswagger = function(options){
         fromSpecs: fromSpecs,
         destroy: destroy
     };
-
-
 }
 
 if (typeof exports === 'object' && exports) {
