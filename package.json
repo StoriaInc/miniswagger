@@ -1,6 +1,6 @@
 {
   "name": "miniswagger",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Minimal swagger implementation for Selfish API",
   "main": "miniswagger.js",
   "scripts": {
@@ -22,9 +22,8 @@
   },
   "homepage": "https://github.com/frumatic/miniswagger",
   "dependencies": {
-    "browser-request": "^0.3.2",
-    "lodash": "^2.4.1",
-    "promise": "^5.0.0",
+    "browser-request": "^0.3.3",
+    "lodash": "^4.11.1",
     "request": "^2.40.0",
     "tough-cookie": "^0.12.1"
   }

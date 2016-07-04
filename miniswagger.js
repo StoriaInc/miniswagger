@@ -1,6 +1,9 @@
 /* jshint node: true, browser: true */
 "use strict";
 
+var extend = require('lodash/extend');
+var find = require('lodash/find');
+
 var miniswagger = function(options){
     var timeFirst, timeEnd;
     var cache = {};
@@ -18,19 +21,9 @@ var miniswagger = function(options){
 
     var node = typeof window === 'undefined';
 
-    var request, _, Promise;
+    var request = require('browser-request');
     var now = function(){
         return 'undefined' !== typeof performance ? performance.now() : new Date().getTime()
-    }
-
-    if (!node) {
-        request = window.request;
-        _ = window._;
-        Promise = window.Promise;
-    } else {
-        request = require('request');
-        _ = require('lodash');
-        Promise = require('promise');
     }
 
     function fetchSpec(url) {
@@ -80,12 +73,12 @@ var miniswagger = function(options){
                 params = JSON.parse(JSON.stringify(params || {})); // clone the params object
                 var op = this.operations[operation];
 
-                var defaultHeaders = _.extend({
+                var defaultHeaders = extend({
                     accept: "application/json, text/plain",
                     "content-type": "application/json; charset=UTF-8"
                 }, options.headers);
 
-                var headers = ( additionalHeaders ) ? _.extend( defaultHeaders, additionalHeaders ) : defaultHeaders;
+                var headers = ( additionalHeaders ) ? extend( defaultHeaders, additionalHeaders ) : defaultHeaders;
 
                 var req = {
                     url: spec.basePath + interpolate(op.path, params),
@@ -103,10 +96,10 @@ var miniswagger = function(options){
                 Object.keys(params).map(function(p) {
                     var paramType;
 
-                    var pp = _.find(this.operations[operation].parameters, function(x) { return x.name === p})
+                    var pp = find(this.operations[operation].parameters, function(x) { return x.name === p})
                     if (!!pp) paramType = pp.paramType
                     else {
-                        pp = _.find(
+                        pp = find(
                             this.operations[operation].parameters.filter( function(prm) { return prm.type in spec.models }), function(prm) { return p in spec.models[prm.type].properties })
                         if (typeof pp !== 'undefined') {
                             paramType = pp.paramType
@@ -162,7 +155,7 @@ var miniswagger = function(options){
                 return new Promise(function (resolve, reject) {
                     request(req, function(err, response, body) {
 
-                        var headers = response.getAllResponseHeaders().split("\n").reduce( function(acc, i) {
+                        var headers = node ? response.headers : headers.split("\n").reduce( function(acc, i) {
                             var colon = i.indexOf(':');
                             var key = i.substring(0, colon)
                             var value = i.substring(colon+1, i.length).trim('')
