@@ -18,10 +18,10 @@ var miniswagger = function(options){
 
     log('cache: expire at:', options)
 
-
     var node = typeof window === 'undefined';
 
-    var request = require('browser-request');
+    var request = node ? require('request') : require('browser-request'); // Use bundle.ignore('request') in browserify to  exclude "request" from output.
+
     var now = function(){
         return 'undefined' !== typeof performance ? performance.now() : new Date().getTime()
     }
@@ -155,7 +155,7 @@ var miniswagger = function(options){
                 return new Promise(function (resolve, reject) {
                     request(req, function(err, response, body) {
 
-                        var headers = node ? response.headers : headers.split("\n").reduce( function(acc, i) {
+                        var headers = node ? response.headers : response.getAllResponseHeaders().split("\n").reduce( function(acc, i) {
                             var colon = i.indexOf(':');
                             var key = i.substring(0, colon)
                             var value = i.substring(colon+1, i.length).trim('')
